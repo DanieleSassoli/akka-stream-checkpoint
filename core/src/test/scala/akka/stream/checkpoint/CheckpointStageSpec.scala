@@ -1,6 +1,7 @@
 package akka.stream.checkpoint
 
 import java.util.concurrent.atomic.AtomicLong
+import java.util.function.LongBinaryOperator
 
 import akka.NotUsed
 import akka.actor.ActorSystem
@@ -19,7 +20,13 @@ class CheckpointStageSpec extends WordSpec with MustMatchers with ScalaFutures w
 
   val counterClock = new Clock {
     val count = new AtomicLong(0L)
-    override def nanoTime: Long = count.incrementAndGet()
+    override def nanoTime: Long = count.accumulateAndGet(0L, new LongBinaryOperator {
+      override def applyAsLong(left: Long, right: Long): Long =
+        if (left % 2 == 0)
+          left + 1
+        else
+          left + 3
+    })
   }
 
   "The Checkpoint stage" should {
@@ -61,7 +68,7 @@ class CheckpointStageSpec extends WordSpec with MustMatchers with ScalaFutures w
         pullLatencies.size must ===(1)
         pushLatencies.size must ===(0)
 
-        pullLatencies.head must ===(1)
+        pullLatencies.head must ===(3)
       }
 
       sourcePromise.success(Some(42))
@@ -87,6 +94,35 @@ class CheckpointStageSpec extends WordSpec with MustMatchers with ScalaFutures w
       val probe =
         Source.single(NotUsed)
           .via(CheckpointStage(arrayBackedRepo, counterClock))
+          .runWith(TestSink.probe[NotUsed.type])
+
+      eventually {
+        backpressureRatios.size must ===(0)
+      }
+
+      probe.request(1)
+
+      eventually {
+        backpressureRatios.size must ===(1)
+        backpressureRatios.head must ===(25)
+      }
+    }
+
+    "publish a neutral 50% backpressure rate in case time cannot be discerned" in {
+      val verySlowClock = new Clock {
+        override def nanoTime: Long = 123L
+      }
+
+      val backpressureRatios = ListBuffer.empty[Long]
+
+      val arrayBackedRepo = new CheckpointRepository {
+        override def markPush(nanos: Long, backpressureRatio: Long): Unit = backpressureRatios += backpressureRatio
+        override def markPull(nanos: Long): Unit = ()
+      }
+
+      val probe =
+        Source.single(NotUsed)
+          .via(CheckpointStage(arrayBackedRepo, verySlowClock))
           .runWith(TestSink.probe[NotUsed.type])
 
       eventually {
