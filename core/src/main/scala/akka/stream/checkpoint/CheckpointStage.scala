@@ -26,9 +26,13 @@ private[checkpoint] final case class CheckpointStage[T](repository: CheckpointRe
 
         val now = clock.nanoTime
         val lastPushedSpan = now - lastPushed
-        if (lastPushedSpan > 0) repository.markPush(now - lastPulled, (lastPulled - lastPushed) * 100 / lastPushedSpan)
-        else repository.markPush(now - lastPulled, 50)
-        // If time cannot be discerned, give a neutral stat so we don't skew the count. There is no right answer.
+
+        if (lastPushedSpan > 0)
+          repository.markPush(now - lastPulled, (lastPulled - lastPushed) * 100 / lastPushedSpan)
+        else
+          // If time cannot be discerned, give a neutral stat so we don't skew the count. There is no right answer.
+          repository.markPush(now - lastPulled, 50)
+
         lastPushed = now
       }
 

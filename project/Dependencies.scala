@@ -17,7 +17,8 @@ object Dependencies {
   ))
 
   val dropwizard = Seq(libraryDependencies ++= Seq(
-    "io.dropwizard.metrics" % "metrics-core" % dropwizardVersion,
+    "io.dropwizard.metrics"         % "metrics-core"                   % dropwizardVersion,
+    "org.mpierce.metrics.reservoir" % "hdrhistogram-metrics-reservoir" % "1.1.2",
     scalaTest
   ))
 

@@ -21,7 +21,8 @@ val commonSettings = Seq(
   scmInfo := Some(
     ScmInfo(url("https://github.com/svezfaz/akka-stream-checkpoint"),
       "scm:git:git@github.com:svezfaz/akka-stream-checkpoint.git")
-  )
+  ),
+  resolvers += Resolver.bintrayRepo("marshallpierce", "maven")
 )
 
 lazy val publishSettings = Seq(

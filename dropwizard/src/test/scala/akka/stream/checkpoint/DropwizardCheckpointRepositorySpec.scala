@@ -3,8 +3,6 @@ package akka.stream.checkpoint
 import com.codahale.metrics.MetricRegistry
 import org.scalatest.{MustMatchers, WordSpec}
 
-import scala.concurrent.duration._
-
 class DropwizardCheckpointRepositorySpec extends WordSpec with MustMatchers {
 
   "DropwizardCheckpointRepository" should {
@@ -15,7 +13,7 @@ class DropwizardCheckpointRepositorySpec extends WordSpec with MustMatchers {
     "store readings in aptly named metrics" when {
 
       "elements are pulled into the checkpoint" in {
-        val latency = 1.milli.toNanos
+        val latency = 42L
         repository.markPull(latency)
 
         registry.histogram("test_pull_latency").getCount must ===(1)
@@ -25,8 +23,8 @@ class DropwizardCheckpointRepositorySpec extends WordSpec with MustMatchers {
       }
 
       "elements are pushed through the checkpoint" in {
-        val latency = 5.millis.toNanos
-        val backpressureRatio = 93L
+        val latency = 64L
+        val backpressureRatio = 54L
         repository.markPush(latency, backpressureRatio)
 
         registry.histogram("test_push_latency").getCount must ===(1)

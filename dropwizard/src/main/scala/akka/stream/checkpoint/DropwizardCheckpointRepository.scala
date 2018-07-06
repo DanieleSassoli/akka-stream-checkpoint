@@ -1,14 +1,17 @@
 package akka.stream.checkpoint
 
-import com.codahale.metrics.MetricRegistry
+import com.codahale.metrics.{Histogram, MetricRegistry}
+import org.mpierce.metrics.reservoir.hdrhistogram.HdrHistogramResetOnSnapshotReservoir
 
 private[checkpoint] object DropwizardCheckpointRepository {
 
   def apply(name: String)(implicit metricRegistry: MetricRegistry): CheckpointRepository = new CheckpointRepository {
 
-    private val pullLatency       = metricRegistry.histogram(name + "_pull_latency")
-    private val pushLatency       = metricRegistry.histogram(name + "_push_latency")
-    private val backpressureRatio = metricRegistry.histogram(name + "_backpressure_ratio")
+    def newHistogram = new Histogram(new HdrHistogramResetOnSnapshotReservoir())
+
+    private val pullLatency       = metricRegistry.register(name + "_pull_latency", newHistogram)
+    private val pushLatency       = metricRegistry.register(name + "_push_latency", newHistogram)
+    private val backpressureRatio = metricRegistry.register(name + "_backpressure_ratio", newHistogram)
     private val throughput        = metricRegistry.meter(name + "_throughput")
     private val backpressured     = metricRegistry.counter(name + "_backpressured")
 
