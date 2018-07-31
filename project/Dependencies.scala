@@ -3,10 +3,10 @@ import sbt._
 
 object Dependencies {
 
-  val akkaVersion                  = "2.5.13"
+  val akkaVersion                  = "2.5.14"
   val dropwizardVersion            = "3.1.2"
   val hdrHistogramReservoirVersion = "1.1.2"
-  val kamonVersion                 = "1.1.0"
+  val kamonVersion                 = "1.1.1"
   val scalatestVersion             = "3.0.5"
 
   val scalaTest = "org.scalatest" %% "scalatest" % scalatestVersion % Test
