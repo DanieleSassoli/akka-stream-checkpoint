@@ -39,7 +39,18 @@ class KamonCheckpointRepositorySpec extends WordSpec with MustMatchers with Metr
         Kamon.counter("test_throughput").value() must ===(1)
 
         Kamon.gauge("test_backpressured").value() must ===(1)
+      }
 
+      "the stage fails" in {
+        repository.markFailure(new RuntimeException("total failure"))
+
+        Kamon.gauge("test_failures").value() must ===(1)
+      }
+
+      "the stage completes" in {
+        repository.markCompletion()
+
+        Kamon.gauge("test_completions").value() must ===(1)
       }
     }
   }

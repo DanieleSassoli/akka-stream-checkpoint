@@ -43,6 +43,21 @@ private[checkpoint] final case class CheckpointStage[T](repository: CheckpointRe
         repository.markPull(lastPulled - lastPushed)
       }
 
+      override def onUpstreamFinish(): Unit = {
+        repository.markCompletion()
+        super.onUpstreamFinish()
+      }
+
+      override def onUpstreamFailure(ex: Throwable): Unit = {
+        repository.markFailure(ex)
+        super.onUpstreamFailure(ex)
+      }
+
+      override def onDownstreamFinish(): Unit = {
+        repository.markCompletion()
+        super.onDownstreamFinish()
+      }
+
       setHandlers(in, out, this)
     }
 }
