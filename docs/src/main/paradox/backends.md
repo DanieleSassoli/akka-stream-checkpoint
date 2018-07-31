@@ -10,6 +10,8 @@ with the checkpoint label you specify.
 * `{label}_throughput`: @extref[meter](dw-docs://#meters) to store the throughput rate of the checkpoint
 * `{label}_backpressure_ratio`: @extref[histogram](dw-docs:/#histograms) to store the percentage of time the checkpoint is backpressuring
 * `{label}_backpressured`: @extref[counter](dw-docs://#counters) to store the current backpressure state of the checkpoint
+* `{label}_failures`: @extref[counter](dw-docs://#counters) to count how many times the pipeline failed at this checkpoint
+* `{label}_completions`: @extref[counter](dw-docs://#counters) to count how many times the pipeline completed at this checkpoint
 
 ## Kamon
 The [Kamon](https://kamon.io) backend creates the following metrics for each checkpoint. Note that each metric will be prefixed
@@ -20,6 +22,8 @@ with the checkpoint label you specify.
 * `{label}_throughput`: @extref[counter](kamon-docs:/core/basics/metrics/) to store the throughput rate of the checkpoint
 * `{label}_backpressure_ratio`: @extref[histogram](kamon-docs:/core/basics/metrics/) to store the percentage of time the checkpoint is backpressuring
 * `{label}_backpressured`: @extref[gauge](kamon-docs:/core/basics/metrics/) to store the current backpressure state of the checkpoint
+* `{label}_failures`: @extref[gauge](kamon-docs:/core/basics/metrics/) to count how many times the pipeline failed at this checkpoint
+* `{label}_completions`: @extref[gauge](kamon-docs:/core/basics/metrics/) to count how many times the pipeline completed at this checkpoint
 
 ## Custom
 

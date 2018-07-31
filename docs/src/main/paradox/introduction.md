@@ -74,12 +74,13 @@ previously described to fall silent. To solve this issue, each _checkpoint_ keep
 if the _checkpoint_ is currently backpressured. Because of its simplicity, this metric becomes meaningful in case of 
 liveness issues.
 
-## What this library does NOT
+### Failures / Completions
+Failures and completions are lifecycle termination events for any Akka Stream stage. Failures are erroneous terminations, whilst
+completions are successful terminations.
+Akka Streams offers a way to track these events using @extref[monitor stages](akka-docs:/stream/operators/index.html#watching-status-stages)
+However for convenience purposes, the same events are tracked by `akka-stream-checkpoint` as 2 distinct metrics. 
 
-### Error tracking
-_Akka Streams Checkpoint_ does not currently offer a way to record errors or completion events happening in the pipeline.
-Check out @extref[these stages](akka-docs:/stream/operators/index.html#watching-status-stages) 
-already provided by Akka Streams for these purposes.
+## What this library does NOT
 
 ### Trace context
 _Akka Streams Checkpoint_ is not a solution to allow tracing of context in Akka Streams applications. However, the
