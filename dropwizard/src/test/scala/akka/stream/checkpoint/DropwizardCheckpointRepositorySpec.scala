@@ -37,6 +37,18 @@ class DropwizardCheckpointRepositorySpec extends WordSpec with MustMatchers {
 
         registry.counter("test_backpressured").getCount must ===(1)
       }
+
+      "the stage fails" in {
+        repository.markFailure(new RuntimeException("total failure"))
+
+        registry.counter("test_failures").getCount must ===(1)
+      }
+
+      "the stage completes" in {
+        repository.markCompletion()
+
+        registry.counter("test_completions").getCount must ===(1)
+      }
     }
   }
 }

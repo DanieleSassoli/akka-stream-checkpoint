@@ -44,6 +44,8 @@ class CheckpointBenchmark {
     override def createRepository(name: String): CheckpointRepository = new CheckpointRepository {
       override def markPush(latencyNanos: Long, backpressureRatio: Long): Unit = ()
       override def markPull(latencyNanos: Long): Unit = ()
+      override def markFailure(ex: Throwable): Unit = ()
+      override def markCompletion(): Unit = ()
     }
   }
 

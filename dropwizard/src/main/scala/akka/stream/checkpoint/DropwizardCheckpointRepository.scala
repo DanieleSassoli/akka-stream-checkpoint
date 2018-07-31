@@ -14,6 +14,8 @@ private[checkpoint] object DropwizardCheckpointRepository {
     private val backpressureRatio = metricRegistry.register(name + "_backpressure_ratio", newHistogram)
     private val throughput        = metricRegistry.meter(name + "_throughput")
     private val backpressured     = metricRegistry.counter(name + "_backpressured")
+    private val failures          = metricRegistry.counter(name + "_failures")
+    private val completions       = metricRegistry.counter(name + "_completions")
 
     backpressured.inc()
 
@@ -27,6 +29,14 @@ private[checkpoint] object DropwizardCheckpointRepository {
       backpressureRatio.update(ratio)
       throughput.mark()
       backpressured.inc()
+    }
+
+    override def markFailure(ex: Throwable): Unit = {
+      failures.inc()
+    }
+
+    override def markCompletion(): Unit = {
+      completions.inc()
     }
   }
 }

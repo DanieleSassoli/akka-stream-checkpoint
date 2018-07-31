@@ -17,6 +17,17 @@ trait CheckpointRepository {
     * @param backpressureRatio ratio between the pull latency and the entire last push-push cycle
     */
   def markPush(latencyNanos: Long, backpressureRatio: Long): Unit
+
+  /**
+   * Allows to store a failure event
+   * @param ex the failure cause
+   */
+  def markFailure(ex: Throwable): Unit
+
+  /**
+   * Allows to store a completion event
+   */
+  def markCompletion(): Unit
 }
 
 /**

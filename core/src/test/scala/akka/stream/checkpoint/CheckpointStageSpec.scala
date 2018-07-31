@@ -1,6 +1,6 @@
 package akka.stream.checkpoint
 
-import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong}
 import java.util.function.LongBinaryOperator
 
 import akka.NotUsed
@@ -35,6 +35,8 @@ class CheckpointStageSpec extends WordSpec with MustMatchers with ScalaFutures w
       val noopRepo = new CheckpointRepository {
         override def markPull(latencyNanos: Long): Unit = ()
         override def markPush(latencyNanos: Long, backpressureRatio: Long): Unit = ()
+        override def markFailure(ex: Throwable): Unit = ()
+        override def markCompletion(): Unit = ()
       }
 
       val values = 1 to 5
@@ -51,6 +53,8 @@ class CheckpointStageSpec extends WordSpec with MustMatchers with ScalaFutures w
       val arrayBackedRepo = new CheckpointRepository {
         override def markPush(nanos: Long, backpressureRatio: Long): Unit = pushLatencies += nanos
         override def markPull(nanos: Long): Unit = pullLatencies += nanos
+        override def markFailure(ex: Throwable): Unit = ()
+        override def markCompletion(): Unit = ()
       }
 
       val (sourcePromise, probe) =
@@ -89,6 +93,8 @@ class CheckpointStageSpec extends WordSpec with MustMatchers with ScalaFutures w
       val arrayBackedRepo = new CheckpointRepository {
         override def markPush(nanos: Long, backpressureRatio: Long): Unit = backpressureRatios += backpressureRatio
         override def markPull(nanos: Long): Unit = ()
+        override def markFailure(ex: Throwable): Unit = ()
+        override def markCompletion(): Unit = ()
       }
 
       val probe =
@@ -118,6 +124,8 @@ class CheckpointStageSpec extends WordSpec with MustMatchers with ScalaFutures w
       val arrayBackedRepo = new CheckpointRepository {
         override def markPush(nanos: Long, backpressureRatio: Long): Unit = backpressureRatios += backpressureRatio
         override def markPull(nanos: Long): Unit = ()
+        override def markFailure(ex: Throwable): Unit = ()
+        override def markCompletion(): Unit = ()
       }
 
       val probe =
@@ -135,6 +143,47 @@ class CheckpointStageSpec extends WordSpec with MustMatchers with ScalaFutures w
         backpressureRatios.size must ===(1)
         backpressureRatios.head must ===(50)
       }
+    }
+
+    "record stage failures" in {
+      val failed    = new AtomicBoolean(false)
+      val completed = new AtomicBoolean(false)
+
+      val boolBackedRepo = new CheckpointRepository {
+        override def markPush(nanos: Long, backpressureRatio: Long): Unit = ()
+        override def markPull(nanos: Long): Unit = ()
+        override def markFailure(ex: Throwable): Unit = failed.set(true)
+        override def markCompletion(): Unit = completed.set(true)
+      }
+
+      Source.failed(new RuntimeException("we are doomed!"))
+        .via(CheckpointStage(boolBackedRepo, counterClock))
+        .runWith(Sink.ignore)
+        .failed
+        .futureValue
+
+      failed.get()    must ===(true)
+      completed.get() must ===(false)
+    }
+
+    "record stage completions" in {
+      val failed    = new AtomicBoolean(false)
+      val completed = new AtomicBoolean(false)
+
+      val boolBackedRepo = new CheckpointRepository {
+        override def markPush(nanos: Long, backpressureRatio: Long): Unit = ()
+        override def markPull(nanos: Long): Unit = ()
+        override def markFailure(ex: Throwable): Unit = failed.set(true)
+        override def markCompletion(): Unit = completed.set(true)
+      }
+
+      Source.single("valid message")
+        .via(CheckpointStage(boolBackedRepo, counterClock))
+        .runWith(Sink.ignore)
+        .futureValue
+
+      failed.get()    must ===(false)
+      completed.get() must ===(true)
     }
   }
 

@@ -20,6 +20,12 @@ object CustomBackendExample extends App {
 
       override def markPull(latencyNanos: Long): Unit =
         println(s"PULL - $name: latency:$latencyNanos")
+
+      override def markFailure(ex: Throwable): Unit =
+        println(s"FAILED - $name: cause: $ex")
+
+      override def markCompletion(): Unit =
+        println(s"COMPLETED - $name")
     }
   }
 

@@ -33,6 +33,17 @@ public class CustomBackendExample {
                         System.out.println(String.format("PULL - %s: latency:%d",
                                 name, latencyNanos));
                     }
+
+                    @Override
+                    public void markFailure(Throwable ex) {
+                        System.out.println(String.format("FAILED - %s: cause:%s",
+                                name, ex.toString()));
+                    }
+
+                    @Override
+                    public void markCompletion() {
+                        System.out.println(String.format("COMPLETED - %s", name));
+                    }
                 };
             }
         };

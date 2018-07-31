@@ -12,6 +12,8 @@ private[checkpoint] object KamonCheckpointRepository {
     private val backpressureRatio = Kamon.histogram(name + "_backpressure_ratio", MeasurementUnit.percentage)
     private val throughput        = Kamon.counter(name + "_throughput")
     private val backpressured     = Kamon.gauge(name + "_backpressured")
+    private val failures          = Kamon.gauge(name + "_failures")
+    private val completions       = Kamon.gauge(name + "_completions")
 
     backpressured.increment()
 
@@ -25,6 +27,14 @@ private[checkpoint] object KamonCheckpointRepository {
       backpressureRatio.record(ratio)
       throughput.increment()
       backpressured.increment()
+    }
+
+    override def markFailure(ex: Throwable): Unit = {
+      failures.increment()
+    }
+
+    override def markCompletion(): Unit = {
+      completions.increment()
     }
   }
 }
