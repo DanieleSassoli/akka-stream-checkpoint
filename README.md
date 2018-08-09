@@ -12,3 +12,5 @@
 Checkpoint stage to monitor [Akka Streams](http://doc.akka.io/docs/akka/current/scala/stream/index.html) streaming applications.
 
 Please checkout the [website](https://svezfaz.github.io/akka-stream-checkpoint/) for motivation and documentation.
+
+A list of notable changes is maintained in the [changelog](CHANGELOG.md).
