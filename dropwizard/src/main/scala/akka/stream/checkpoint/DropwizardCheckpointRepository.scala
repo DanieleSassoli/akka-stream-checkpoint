@@ -9,16 +9,19 @@ private[checkpoint] object DropwizardCheckpointRepository {
 
     def newHistogram = new Histogram(new HdrHistogramResetOnSnapshotReservoir())
 
-    private val dottedLabels = labels.map{
+    private val pullLatency       = metricRegistry.register(toMetricName(name + "_pull_latency"), newHistogram)
+    private val pushLatency       = metricRegistry.register(toMetricName(name + "_push_latency"), newHistogram)
+    private val backpressureRatio = metricRegistry.register(toMetricName(name + "_backpressure_ratio"), newHistogram)
+    private val throughput        = metricRegistry.meter(toMetricName(name + "_throughput"))
+    private val backpressured     = metricRegistry.counter(toMetricName(name + "_backpressured"))
+    private val failures          = metricRegistry.counter(toMetricName(name + "_failures"))
+    private val completions       = metricRegistry.counter(toMetricName(name + "_completions"))
+
+    private lazy val dottedLabels = labels.map{
       case (k,v) => s"$k.$v"
     }.toList
-    private val pullLatency       = metricRegistry.register((name + "_pull_latency" :: dottedLabels).mkString("."), newHistogram)
-    private val pushLatency       = metricRegistry.register(name + "_push_latency", newHistogram)
-    private val backpressureRatio = metricRegistry.register(name + "_backpressure_ratio", newHistogram)
-    private val throughput        = metricRegistry.meter(name + "_throughput")
-    private val backpressured     = metricRegistry.counter(name + "_backpressured")
-    private val failures          = metricRegistry.counter(name + "_failures")
-    private val completions       = metricRegistry.counter(name + "_completions")
+
+    private def toMetricName(label: String) = (label :: dottedLabels).mkString(".")
 
     backpressured.inc()
 
