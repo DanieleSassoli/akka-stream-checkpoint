@@ -5,15 +5,15 @@ import kamon.metric.MeasurementUnit
 
 private[checkpoint] object KamonCheckpointRepository {
 
-  def apply(name: String): CheckpointRepository = new CheckpointRepository {
+  def apply(name: String, labels: Map[String, String] = Map.empty): CheckpointRepository = new CheckpointRepository {
 
-    private val pullLatency       = Kamon.histogram(name + "_pull_latency", MeasurementUnit.time.nanoseconds)
-    private val pushLatency       = Kamon.histogram(name + "_push_latency", MeasurementUnit.time.nanoseconds)
-    private val backpressureRatio = Kamon.histogram(name + "_backpressure_ratio", MeasurementUnit.percentage)
-    private val throughput        = Kamon.counter(name + "_throughput")
-    private val backpressured     = Kamon.gauge(name + "_backpressured")
-    private val failures          = Kamon.gauge(name + "_failures")
-    private val completions       = Kamon.gauge(name + "_completions")
+    private val pullLatency       = Kamon.histogram(name + "_pull_latency", MeasurementUnit.time.nanoseconds).refine(labels)
+    private val pushLatency       = Kamon.histogram(name + "_push_latency", MeasurementUnit.time.nanoseconds).refine(labels)
+    private val backpressureRatio = Kamon.histogram(name + "_backpressure_ratio", MeasurementUnit.percentage).refine(labels)
+    private val throughput        = Kamon.counter(name + "_throughput").refine(labels)
+    private val backpressured     = Kamon.gauge(name + "_backpressured").refine(labels)
+    private val failures          = Kamon.gauge(name + "_failures").refine(labels)
+    private val completions       = Kamon.gauge(name + "_completions").refine(labels)
 
     backpressured.increment()
 

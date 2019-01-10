@@ -9,7 +9,13 @@ import akka.stream.checkpoint.CheckpointRepository;
 import akka.stream.checkpoint.javadsl.Checkpoint;
 import akka.stream.javadsl.Source;
 
+import java.util.HashMap;
 import java.util.concurrent.CompletionStage;
+
+import scala.Predef;
+import scala.Tuple2;
+import scala.collection.JavaConverters;
+import scala.collection.immutable.Map;
 
 public class CustomBackendExample {
 
@@ -19,8 +25,14 @@ public class CustomBackendExample {
 
         // #custom
         final CheckpointBackend backend = new CheckpointBackend() {
+
             @Override
-            public CheckpointRepository createRepository(String name) {
+            public Map<String, String> createRepository$default$2() {
+                return null;
+            }
+
+            @Override
+            public CheckpointRepository createRepository(String name, scala.collection.immutable.Map<String, String> labels) {
                 return new CheckpointRepository() {
                     @Override
                     public void markPush(long latencyNanos, long backpressureRatio) {

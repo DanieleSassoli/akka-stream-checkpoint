@@ -5,11 +5,14 @@ import org.mpierce.metrics.reservoir.hdrhistogram.HdrHistogramResetOnSnapshotRes
 
 private[checkpoint] object DropwizardCheckpointRepository {
 
-  def apply(name: String)(implicit metricRegistry: MetricRegistry): CheckpointRepository = new CheckpointRepository {
+  def apply(name: String, labels: Map[String, String] = Map.empty)(implicit metricRegistry: MetricRegistry): CheckpointRepository = new CheckpointRepository {
 
     def newHistogram = new Histogram(new HdrHistogramResetOnSnapshotReservoir())
 
-    private val pullLatency       = metricRegistry.register(name + "_pull_latency", newHistogram)
+    private val dottedLabels = labels.map{
+      case (k,v) => s"$k.$v"
+    }.toList
+    private val pullLatency       = metricRegistry.register((name + "_pull_latency" :: dottedLabels).mkString("."), newHistogram)
     private val pushLatency       = metricRegistry.register(name + "_push_latency", newHistogram)
     private val backpressureRatio = metricRegistry.register(name + "_backpressure_ratio", newHistogram)
     private val throughput        = metricRegistry.meter(name + "_throughput")

@@ -15,6 +15,9 @@ object Checkpoint {
     * @tparam T pass-through type of the elements that will flow through the checkpoint
     * @return a newly created checkpoint Flow
     */
+  def create[T](name: String, backend: CheckpointBackend, labels: Map[String,String] = Map.empty): javadsl.Flow[T, T, NotUsed] =
+    javadsl.Flow.fromGraph(CheckpointStage[T](repository = backend.createRepository(name, labels), clock = SystemClock))
+
   def create[T](name: String, backend: CheckpointBackend): javadsl.Flow[T, T, NotUsed] =
     javadsl.Flow.fromGraph(CheckpointStage[T](repository = backend.createRepository(name), clock = SystemClock))
 

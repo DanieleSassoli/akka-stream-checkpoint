@@ -15,21 +15,21 @@ object Checkpoint {
     * @tparam T pass-through type of the elements that will flow through the checkpoint
     * @return a newly created checkpoint Flow
     */
-  def apply[T](name: String)(implicit backend: CheckpointBackend): Flow[T, T, NotUsed] =
-    Flow.fromGraph(CheckpointStage[T](repository = backend.createRepository(name), clock = SystemClock))
+  def apply[T](name: String, labels: Map[String, String] = Map.empty)(implicit backend: CheckpointBackend): Flow[T, T, NotUsed] =
+    Flow.fromGraph(CheckpointStage[T](repository = backend.createRepository(name, labels), clock = SystemClock))
 }
 
 object Implicits {
 
   final implicit class FlowMetricsOps[In, Out, Mat](val flow: Flow[In, Out, Mat]) extends AnyVal {
 
-    def checkpoint(name: String)(implicit backend: CheckpointBackend): Flow[In, Out, Mat] =
-      flow.via(CheckpointStage(repository = backend.createRepository(name), clock = SystemClock))
+    def checkpoint(name: String, labels: Map[String, String] = Map.empty)(implicit backend: CheckpointBackend): Flow[In, Out, Mat] =
+      flow.via(CheckpointStage(repository = backend.createRepository(name, labels), clock = SystemClock))
   }
 
   final implicit class SourceMetricsOps[Out, Mat](val source: Source[Out, Mat]) extends AnyVal {
 
-    def checkpoint(name: String)(implicit backend: CheckpointBackend): Source[Out, Mat] =
-      source.via(CheckpointStage(repository = backend.createRepository(name), clock = SystemClock))
+    def checkpoint(name: String, labels: Map[String, String] = Map.empty)(implicit backend: CheckpointBackend): Source[Out, Mat] =
+      source.via(CheckpointStage(repository = backend.createRepository(name, labels), clock = SystemClock))
   }
 }

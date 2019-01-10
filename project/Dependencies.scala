@@ -3,7 +3,7 @@ import sbt._
 
 object Dependencies {
 
-  val akkaVersion                  = "2.5.14"
+  val akkaVersion                  = "2.5.19"
   val dropwizardVersion            = "3.1.2"
   val hdrHistogramReservoirVersion = "1.1.2"
   val kamonVersion                 = "1.1.1"
@@ -19,7 +19,7 @@ object Dependencies {
 
   val dropwizard = Seq(libraryDependencies ++= Seq(
     "io.dropwizard.metrics"         % "metrics-core"                   % dropwizardVersion,
-    "org.mpierce.metrics.reservoir" % "hdrhistogram-metrics-reservoir" % hdrHistogramReservoirVersion,
+    "org.mpierce.metrics.reservoir"  % "hdrhistogram-metrics-reservoir" % hdrHistogramReservoirVersion,
     scalaTest
   ))
 

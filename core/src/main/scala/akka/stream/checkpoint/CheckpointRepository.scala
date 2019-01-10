@@ -36,5 +36,5 @@ trait CheckpointRepository {
   */
 trait CheckpointBackend {
 
-  def createRepository(name: String): CheckpointRepository
+  def createRepository(name: String, labels: Map[String, String] = Map.empty): CheckpointRepository
 }
