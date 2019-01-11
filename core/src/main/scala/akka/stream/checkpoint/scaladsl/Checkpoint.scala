@@ -10,7 +10,8 @@ object Checkpoint {
     * Scala API
     * Creates a checkpoint Flow.
     *
-    * @param name checkpoint identification label
+    * @param name checkpoint identification
+    * @param labels set of key, values to add to metrics
     * @param backend backend to store the checkpoint readings
     * @tparam T pass-through type of the elements that will flow through the checkpoint
     * @return a newly created checkpoint Flow
