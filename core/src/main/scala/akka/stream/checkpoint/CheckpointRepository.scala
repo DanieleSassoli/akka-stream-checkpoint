@@ -19,14 +19,14 @@ trait CheckpointRepository {
   def markPush(latencyNanos: Long, backpressureRatio: Long): Unit
 
   /**
-   * Allows to store a failure event
-   * @param ex the failure cause
-   */
+    * Allows to store a failure event
+    * @param ex the failure cause
+    */
   def markFailure(ex: Throwable): Unit
 
   /**
-   * Allows to store a completion event
-   */
+    * Allows to store a completion event
+    */
   def markCompletion(): Unit
 }
 
@@ -36,5 +36,7 @@ trait CheckpointRepository {
   */
 trait CheckpointBackend {
 
-  def createRepository(name: String): CheckpointRepository
+  def createRepository(name: String): CheckpointRepository = createRepository(name, Map.empty)
+
+  def createRepository(name: String, labels: Map[String, String]): CheckpointRepository
 }

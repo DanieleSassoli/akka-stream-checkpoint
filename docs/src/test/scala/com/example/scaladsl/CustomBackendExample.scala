@@ -13,7 +13,7 @@ object CustomBackendExample extends App {
 
   // #custom
   implicit val loggingBackend: CheckpointBackend = new CheckpointBackend {
-    override def createRepository(name: String): CheckpointRepository = new CheckpointRepository {
+    override def createRepository(name: String, labels: Map[String, String] = Map.empty): CheckpointRepository = new CheckpointRepository {
 
       override def markPush(latencyNanos: Long, backpressureRatio: Long): Unit =
         println(s"PUSH - $name: latency:$latencyNanos, backpressure ratio:$backpressureRatio")

@@ -7,10 +7,8 @@ import org.scalatest.{MustMatchers, WordSpec}
 class KamonCheckpointRepositorySpec extends WordSpec with MustMatchers with MetricInspection {
 
   "KamonCheckpointRepository" should {
-
-    val repository = KamonCheckpointRepository("test")
-
     "store readings in aptly named metrics" when {
+      val repository = KamonCheckpointRepository("test")
 
       "elements are pulled into the checkpoint" in {
         val latency = 42L
@@ -52,6 +50,17 @@ class KamonCheckpointRepositorySpec extends WordSpec with MustMatchers with Metr
 
         Kamon.gauge("test_completions").value() must ===(1)
       }
+    }
+  }
+
+  "add labels to metrics" when {
+    val testLabelValue = Map("aLabel" -> "aValue")
+    val repository = KamonCheckpointRepository("label_test", testLabelValue)
+
+    "elements are pulled into the checkpoint" in {
+      repository.markCompletion()
+
+      Kamon.gauge("label_test_completions").refine(testLabelValue).value() must ===(1)
     }
   }
 }
