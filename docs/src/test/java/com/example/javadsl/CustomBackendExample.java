@@ -9,13 +9,7 @@ import akka.stream.checkpoint.CheckpointRepository;
 import akka.stream.checkpoint.javadsl.Checkpoint;
 import akka.stream.javadsl.Source;
 
-import java.util.HashMap;
 import java.util.concurrent.CompletionStage;
-
-import scala.Predef;
-import scala.Tuple2;
-import scala.collection.JavaConverters;
-import scala.collection.immutable.Map;
 
 public class CustomBackendExample {
 
