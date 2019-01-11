@@ -14,12 +14,12 @@ import java.util.concurrent.CompletionStage;
 public class CustomBackendExample {
 
     public static void main(String[] args) {
-        final ActorSystem system = ActorSystem.create("DropwizardExample");
+        final ActorSystem system        = ActorSystem.create("DropwizardExample");
         final Materializer materializer = ActorMaterializer.create(system);
 
         // #custom
         final CheckpointBackend backend = new CheckpointBackend() {
-
+            @Override
             public CheckpointRepository createRepository(String name, scala.collection.immutable.Map<String, String> labels) {
                 return new CheckpointRepository() {
                     @Override

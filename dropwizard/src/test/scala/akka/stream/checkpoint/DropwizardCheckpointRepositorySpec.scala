@@ -51,7 +51,7 @@ class DropwizardCheckpointRepositorySpec extends WordSpec with MustMatchers {
       }
     }
 
-    "add labels to the metrics" when {
+    "add labels to metrics" when {
       val repoName = "label_test"
       val repository = DropwizardCheckpointRepository(repoName, Map("aLabel" -> "aValue"))(registry)
 

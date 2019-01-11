@@ -57,7 +57,7 @@ class KamonCheckpointRepositorySpec extends WordSpec with MustMatchers with Metr
     val testLabelValue = Map("aLabel" -> "aValue")
     val repository = KamonCheckpointRepository("label_test", testLabelValue)
 
-    "the a metrics is sent through" in {
+    "elements are pulled into the checkpoint" in {
       repository.markCompletion()
 
       Kamon.gauge("label_test_completions").refine(testLabelValue).value() must ===(1)
