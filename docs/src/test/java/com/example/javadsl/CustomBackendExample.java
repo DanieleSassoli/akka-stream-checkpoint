@@ -20,7 +20,7 @@ public class CustomBackendExample {
         // #custom
         final CheckpointBackend backend = new CheckpointBackend() {
             @Override
-            public CheckpointRepository createRepository(String name, scala.collection.immutable.Map<String, String> labels) {
+            public CheckpointRepository createRepository(String name, scala.collection.immutable.Map<String, String> tags) {
                 return new CheckpointRepository() {
                     @Override
                     public void markPush(long latencyNanos, long backpressureRatio) {

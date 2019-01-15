@@ -5,7 +5,7 @@ import org.mpierce.metrics.reservoir.hdrhistogram.HdrHistogramResetOnSnapshotRes
 
 private[checkpoint] object DropwizardCheckpointRepository {
 
-  def apply(name: String, labels: Map[String, String] = Map.empty)(implicit metricRegistry: MetricRegistry): CheckpointRepository = new CheckpointRepository {
+  def apply(name: String, tags: Map[String, String] = Map.empty)(implicit metricRegistry: MetricRegistry): CheckpointRepository = new CheckpointRepository {
 
     def newHistogram = new Histogram(new HdrHistogramResetOnSnapshotReservoir())
 
@@ -17,11 +17,11 @@ private[checkpoint] object DropwizardCheckpointRepository {
     private val failures          = metricRegistry.counter(toMetricName(name + "_failures"))
     private val completions       = metricRegistry.counter(toMetricName(name + "_completions"))
 
-    private lazy val dottedLabels = labels.map{
+    private lazy val dottedTags = tags.map{
       case (k,v) => s"$k.$v"
     }.toList
 
-    private def toMetricName(label: String) = (label :: dottedLabels).mkString(".")
+    private def toMetricName(tag: String) = (tag :: dottedTags).mkString(".")
 
     backpressured.inc()
 

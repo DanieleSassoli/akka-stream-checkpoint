@@ -53,14 +53,14 @@ class KamonCheckpointRepositorySpec extends WordSpec with MustMatchers with Metr
     }
   }
 
-  "add labels to metrics" when {
-    val testLabelValue = Map("aLabel" -> "aValue")
-    val repository = KamonCheckpointRepository("label_test", testLabelValue)
+  "add tags to metrics" when {
+    val testTagValue = Map("aTag" -> "aValue")
+    val repository = KamonCheckpointRepository("tag_test", testTagValue)
 
     "elements are pulled into the checkpoint" in {
       repository.markCompletion()
 
-      Kamon.gauge("label_test_completions").refine(testLabelValue).value() must ===(1)
+      Kamon.gauge("tag_test_completions").refine(testTagValue).value() must ===(1)
     }
   }
 }
