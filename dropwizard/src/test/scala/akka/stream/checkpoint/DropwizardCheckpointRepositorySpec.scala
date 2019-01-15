@@ -51,17 +51,17 @@ class DropwizardCheckpointRepositorySpec extends WordSpec with MustMatchers {
       }
     }
 
-    "add labels to metrics" when {
-      val repoName = "label_test"
-      val repository = DropwizardCheckpointRepository(repoName, Map("aLabel" -> "aValue"))(registry)
+    "add tags to metrics" when {
+      val repoName = "tag_test"
+      val repository = DropwizardCheckpointRepository(repoName, Map("aTag" -> "aValue"))(registry)
 
       "elements are pulled into the checkpoint" in {
         val latency = 42L
         repository.markPull(latency)
 
-        registry.histogram(s"${repoName}_pull_latency.aLabel.aValue").getCount must ===(1)
-        registry.histogram(s"${repoName}_pull_latency.aLabel.aValue").getSnapshot.getValues must ===(Array(latency))
-        registry.counter(s"${repoName}_backpressured.aLabel.aValue").getCount must ===(0)
+        registry.histogram(s"${repoName}_pull_latency.aTag.aValue").getCount must ===(1)
+        registry.histogram(s"${repoName}_pull_latency.aTag.aValue").getSnapshot.getValues must ===(Array(latency))
+        registry.counter(s"${repoName}_backpressured.aTag.aValue").getCount must ===(0)
       }
     }
   }
