@@ -17,11 +17,11 @@ private[checkpoint] object DropwizardCheckpointRepository {
     private val failures          = metricRegistry.counter(toMetricName(name + "_failures"))
     private val completions       = metricRegistry.counter(toMetricName(name + "_completions"))
 
-    private lazy val dottedLabels = tags.map{
+    private lazy val dottedTags = tags.map{
       case (k,v) => s"$k.$v"
     }.toList
 
-    private def toMetricName(tag: String) = (tag :: dottedLabels).mkString(".")
+    private def toMetricName(tag: String) = (tag :: dottedTags).mkString(".")
 
     backpressured.inc()
 
