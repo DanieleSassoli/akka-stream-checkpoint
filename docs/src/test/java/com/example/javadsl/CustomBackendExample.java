@@ -4,8 +4,8 @@ import akka.Done;
 import akka.actor.ActorSystem;
 import akka.stream.ActorMaterializer;
 import akka.stream.Materializer;
-import akka.stream.checkpoint.CheckpointBackend;
 import akka.stream.checkpoint.CheckpointRepository;
+import akka.stream.checkpoint.JavaCheckpointBackend;
 import akka.stream.checkpoint.javadsl.Checkpoint;
 import akka.stream.javadsl.Source;
 
@@ -18,9 +18,10 @@ public class CustomBackendExample {
         final Materializer materializer = ActorMaterializer.create(system);
 
         // #custom
-        final CheckpointBackend backend = new CheckpointBackend() {
+        final JavaCheckpointBackend backend = new JavaCheckpointBackend() {
+
             @Override
-            public CheckpointRepository createRepository(String name, scala.collection.immutable.Map<String, String> tags) {
+            public CheckpointRepository createRepository(String name, java.util.Map<String, String> tags) {
                 return new CheckpointRepository() {
                     @Override
                     public void markPush(long latencyNanos, long backpressureRatio) {

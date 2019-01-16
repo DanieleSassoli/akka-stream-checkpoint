@@ -1,5 +1,7 @@
 package akka.stream.checkpoint
 
+import scala.collection.JavaConverters._
+
 /**
   * Represents a storage interface to allow a single checkpoint to store its readings
   */
@@ -36,7 +38,13 @@ trait CheckpointRepository {
   */
 trait CheckpointBackend {
 
-  def createRepository(name: String): CheckpointRepository = createRepository(name, Map.empty)
-
-  def createRepository(name: String, tags: Map[String, String]): CheckpointRepository
+  def createRepository(name: String, tags: Map[String, String] = Map.empty): CheckpointRepository
 }
+
+trait JavaCheckpointBackend extends CheckpointBackend {
+  override def createRepository(name: String, tags: Map[String, String] = Map.empty): CheckpointRepository = createRepository(name, tags.asJava)
+
+  def createRepository(name: String, tags: java.util.Map[String, String]): CheckpointRepository
+}
+
+
